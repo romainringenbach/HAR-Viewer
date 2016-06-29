@@ -17,6 +17,12 @@ function HarViewer(){
     this.waterfall = null;
     this.timesTh = null;
     this.details = null;
+    this.request = null;
+    this.requestList = null;
+    this.response = null;
+    this.responseList = null;
+    this.timings = null;
+    this.timingsList = null;
 
     this.currentEntryFocused = null;
 
@@ -65,8 +71,6 @@ function HarViewer(){
         $('#HarViewerRightPanel').css('float','right');
 
         this.initTable();
-        this.initDetails();
-        this.hideDetails();
         this.initWaterFallView();
         this.showWaterFall();
 
@@ -285,6 +289,10 @@ function HarViewer(){
 
     this.initDetails = function(){
 
+        var responseHeader = ['Server','Date','Content-Type','Last-Modified','Transfer-Encoding','Connection','Vary','Content-Encoding'];
+        var requestHeader = ['Host','Accept','Referer','Accept-Encoding','Accept-Language','User-Agent','Cache-Control'];
+        var timings = ['blocked','dns','connect','send','wait','receive','ssl','comment'];
+
         if ($('#HarViewerDetails').length){
             $('#HarViewerDetails').remove();
         }
@@ -293,6 +301,83 @@ function HarViewer(){
         this.details.id = 'HarViewerDetails';
 
         $('#HarViewerRightPanel').append(this.details);
+
+        this.request = document.createElement( 'div' );
+        this.request.id = 'HarViewerDetailsRequest';
+        this.request.innerHTML = '<p>Request</p>';
+        $('#HarViewerDetails').append(this.request);
+        this.requestList = document.createElement( 'ul' );
+        this.requestList.id = 'HarViewerDetailsRequestList';
+        $('#HarViewerDetailsRequest').append(this.requestList);
+
+        var entry = this.entriesSummaries[this.currentEntryFocused];
+        var entryComplete = this.entries[this.currentEntryFocused];
+
+        var entryRequestList = {};
+
+        for (i = 0; i < entryComplete.request.headers.length; i++) {
+
+            for (j = 0; j < requestHeader.length; j++) {
+                console.log(entryComplete.request.headers[i].name);
+                if (entryComplete.request.headers[i].name == requestHeader[j]){
+                    entryRequestList[requestHeader[j]] = entryComplete.request.headers[i].value;
+                }
+            }
+        }
+
+        for (i = 0; i < requestHeader.length ; i++){
+
+            var li = document.createElement('li');
+            li.innerHTML = '<li><p><strong>'+requestHeader[i]+'</strong> : '+entryRequestList[requestHeader[i]]+'</p>';
+            $('#HarViewerDetailsRequestList').append(li);
+        }
+
+        this.response = document.createElement( 'div' );
+        this.response.id = 'HarViewerDetailsResponse';
+        this.response.innerHTML = '<p>Response</p>';
+        $('#HarViewerDetails').append(this.response);
+        this.responseList = document.createElement( 'ul' );
+        this.responseList.id = 'HarViewerDetailsResponseList';
+        $('#HarViewerDetailsResponse').append(this.responseList);
+
+        var entryResponseList = {};
+
+        for (i = 0; i < entryComplete.response.headers.length; i++) {
+
+            for (j = 0; j < responseHeader.length; j++) {
+                if (entryComplete.response.headers[i].name == responseHeader[j]){
+                    entryResponseList[responseHeader[j]] = entryComplete.response.headers[i].value;
+                }
+            }
+        }
+
+        for (i = 0; i < responseHeader.length ; i++){
+
+            var li = document.createElement('li');
+            li.innerHTML = '<li><p><strong>'+responseHeader[i]+'</strong> : '+entryResponseList[responseHeader[i]]+'</p>';
+            $('#HarViewerDetailsResponseList').append(li);
+
+
+        }
+
+        this.timings = document.createElement( 'div' );
+        this.timings.id = 'HarViewerDetailsTimings';
+        this.timings.innerHTML = '<p>Timings</p>';
+        $('#HarViewerDetails').append(this.timings);
+        this.timingsList = document.createElement( 'ul' );
+        this.timingsList.id = 'HarViewerDetailsTimingsList';
+        $('#HarViewerDetailsTimings').append(this.timingsList);
+
+        var entryTimingsList = entry.Timings
+
+        for (i = 0; i < timings.length ; i++){
+
+            var li = document.createElement('li');
+            li.innerHTML = '<li><p><strong>'+timings[i]+'</strong> : '+entryTimingsList[timings[i]]+'</p>';
+            $('#HarViewerDetailsTimingsList').append(li);
+
+
+        }
 
     }
 
