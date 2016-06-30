@@ -222,6 +222,7 @@ function HarViewer(){
                 Timings: this.entries[i].timings,
                 date: new Date(this.entries[i].startedDateTime).valueOf()
             };
+            delete entry.Timings.comment;
             this.showedEntries.push(entry);
             this.entriesSummaries.push(entry);
         }
@@ -361,6 +362,8 @@ function HarViewer(){
 
             for ( timing in entry.Timings ) {
                 value = entry.Timings[timing];
+                console.log(value);
+
                 allTimingsBlock.title = allTimingsBlock.title+timing+' : '+value+'\n';
             }
 
