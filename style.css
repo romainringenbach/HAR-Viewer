@@ -168,6 +168,7 @@ p {
     margin: 0%;
     width: 100%;
     overflow: hidden;
+
 }
 
 .HarViewerTimeHeader {
@@ -192,6 +193,7 @@ p {
     border-color:  	#000000;
     border-width: 0px;
     background-color: #F0E68C;
+    z-index: 3;
 }
 
 .HarViewerAllTimingBlock{
@@ -204,6 +206,7 @@ p {
     border-width: 0px;
     height: 100%;
     overflow: hidden;
+    z-index: 3;
 }
 
 .HarViewerTimingBlock{

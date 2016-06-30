@@ -11,7 +11,7 @@
   <script src="jquery-2.2.3.min.js"></script>
   <script src="HarViewer.js"></script>
   <script>
-    harviewer = new HarViewer();
+    harviewer = new HarViewer('HarViewer');
     $.getJSON('sample.json', function(data){
 
         harviewer.loadHar(data);
