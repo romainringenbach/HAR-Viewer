@@ -24,7 +24,7 @@ function HarViewer(){
     this.timings = null;
     this.timingsList = null;
 
-    this.currentEntryFocused = null;
+    this.currentEntryFocused = 0;
 
     this.loadHar = function(har){
         this.entriesSummaries = new Array();
@@ -70,9 +70,15 @@ function HarViewer(){
         $('#HarViewerContent').append(this.right);
         $('#HarViewerRightPanel').css('float','right');
 
+
+
         this.initTable();
         this.initWaterFallView();
         this.showWaterFall();
+
+        this.initDetails();
+        this.hideDetails();
+        this.currentEntryFocused = null;
 
     }
 
@@ -275,7 +281,7 @@ function HarViewer(){
                 $('#HarViewerWaterFallRow_'+timing+'_'+i).addClass('HarViewerTiming'+classTiming);
                 $('#HarViewerWaterFallRow_'+timing+'_'+i).addClass('HarViewerTimingBlock');
                 var blockWidth = width * value / this.time;
-                $('#HarViewerWaterFallRow_'+timing+'_'+i).width((blockWidth*0.80));
+                $('#HarViewerWaterFallRow_'+timing+'_'+i).width((blockWidth));
                 trWidth = trWidth + $('#HarViewerWaterFallRow_'+timing+'_'+i).width();
 
 
@@ -318,7 +324,6 @@ function HarViewer(){
         for (i = 0; i < entryComplete.request.headers.length; i++) {
 
             for (j = 0; j < requestHeader.length; j++) {
-                console.log(entryComplete.request.headers[i].name);
                 if (entryComplete.request.headers[i].name == requestHeader[j]){
                     entryRequestList[requestHeader[j]] = entryComplete.request.headers[i].value;
                 }
@@ -378,6 +383,8 @@ function HarViewer(){
 
 
         }
+
+        $('#HarViewerDetails').height( $('#HarViewerTable').height() );
 
     }
 
