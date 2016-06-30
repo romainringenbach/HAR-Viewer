@@ -14,6 +14,7 @@ function HarViewer(){
     this.listFilters = ['Name','URL','Method','Status','Type','Size','Time'];
     this.filters = null;
     this.time = null;
+    this.firstDate = null;
     this.waterfall = null;
     this.timesTh = null;
     this.details = null;
@@ -23,6 +24,10 @@ function HarViewer(){
     this.responseList = null;
     this.timings = null;
     this.timingsList = null;
+    this.actions = null;
+    this.reload = null;
+    this.displayWaterFall = null;
+    this.displayDetails = null;
 
     this.currentEntryFocused = 0;
 
@@ -49,9 +54,53 @@ function HarViewer(){
         $('#HarViewer').append(this.form);
         $('#HarViewerForm').append(this.search);
         $('#HarViewerForm').keypress( this.onSearch );
-        $('#HarViewerForm').click( this.onClickOnSearch );
+        $('#HarViewerSearch').click( this.onClickOnSearch );
         $('#HarViewerForm').focusout( this.onFocusOutSearch );
 
+        this.actions = document.createElement('div');
+        this.actions.id = 'HarViewerActions';
+        $('#HarViewerForm').append(this.actions);
+        this.reload = document.createElement('img');
+        this.reload.id = 'HarViewerReload';
+        this.reload.src = 'reload.png';
+        $('#'+this.actions.id).append(this.reload);
+        $('#'+this.reload.id).outerHeight($('#'+this.search.id).outerHeight());
+        $('#'+this.reload.id).click(function(event){
+            viewer.showedEntries = new Array();
+            for (var i = 0; i < viewer.entriesSummaries.length; i++) {
+                viewer.showedEntries.push(viewer.entriesSummaries[i]);
+            }
+            viewer.initTime();
+            viewer.initTable();
+            viewer.initWaterFallView();
+        })
+        this.displayWaterFall = document.createElement('img');
+        this.displayWaterFall.id = 'HarViewerDisplayWaterFall';
+        this.displayWaterFall.src = 'displayWaterFall.png';
+        $('#'+this.actions.id).append(this.displayWaterFall);
+        $('#'+this.displayWaterFall.id).outerHeight($('#'+this.search.id).outerHeight());
+        $('#'+this.displayWaterFall.id).click(function(event){
+            viewer.hideDetails();
+            viewer.showWaterFall();
+        })
+        this.displayDetails = document.createElement('img');
+        this.displayDetails.id = 'HarViewerDisplayDetails';
+        this.displayDetails.src = 'displayDetails.png';
+        $('#'+this.actions.id).append(this.displayDetails);
+        $('#'+this.displayDetails.id).outerHeight($('#'+this.search.id).outerHeight());
+        $('#'+this.displayDetails.id).click(function(event){
+            viewer.hideWaterFall();
+            viewer.showDetails();
+        })
+
+        var width = $('#'+this.reload.id).outerWidth(true) + $('#'+this.displayWaterFall.id).outerWidth(true) + $('#'+this.displayDetails.id).outerWidth(true);
+        $('#'+this.actions.id).outerWidth(width);
+        $('#HarViewerForm').outerWidth($('#HarViewer').outerWidth());
+        $('#HarViewerForm').height($('#'+this.search.id).outerHeight());
+        $('#HarViewerSearch').css('border-radius',($('#HarViewerSearch').outerHeight()/2));
+        $('#HarViewerSearch').css('border-color','#000000');
+        $('#HarViewerSearch').css('border-width',0);
+        $('#HarViewerSearch').css('border-style','solid');
     }
 
     this.initLeftRight = function(){
@@ -71,7 +120,7 @@ function HarViewer(){
         $('#HarViewerRightPanel').css('float','right');
 
 
-
+        this.initTime();
         this.initTable();
         this.initWaterFallView();
         this.showWaterFall();
@@ -79,7 +128,8 @@ function HarViewer(){
         this.initDetails();
         this.hideDetails();
         this.currentEntryFocused = null;
-
+        $('#HarViewerContent').height($('#HarViewerLeftPanel').outerHeight(true));
+        $('#HarViewerRightPanel').outerWidth($('#HarViewerLeftPanel').outerWidth(true));
     }
 
     this.initTable = function(){
@@ -99,7 +149,6 @@ function HarViewer(){
 
     this.initFilterBar = function(){
 
-
         this.filters = document.createElement( 'div' );
         this.filters.id = 'HarViewerFilters';
         $('#HarViewerTable').append(this.filters);
@@ -107,11 +156,12 @@ function HarViewer(){
         for (var i = 0; i < this.listFilters.length; i++) {
 
             var filter = document.createElement( 'div' );
-            filter.id = 'HarViewerFilters'+this.listFilters[i];
+            filter.id = 'HarViewerFilters_'+i;
             filter.innerHTML = this.listFilters[i];
             $('#HarViewerFilters').append(filter);
             $('#'+filter.id).addClass(filter.id);
-
+            $('#'+filter.id).addClass('HarViewerFilters'+this.listFilters[i]);
+            $('#'+filter.id).click(this.onFilter);
 
         }
 
@@ -166,14 +216,35 @@ function HarViewer(){
                 Type: type,
                 Size: this.entries[i].response.content.size,
                 Time: this.entries[i].time,
-                Timings: this.entries[i].timings
+                Timings: this.entries[i].timings,
+                date: new Date(this.entries[i].startedDateTime).valueOf()
             };
-            this.time = this.time + entry.Time;
             this.showedEntries.push(entry);
             this.entriesSummaries.push(entry);
         }
 
+    }
 
+    this.initTime = function(){
+
+        var a = this.showedEntries[0].date;
+        var b = 0;
+        var c = 0;
+        for (var i = 0; i < this.showedEntries.length; i++) {
+            if (this.showedEntries[i].date < a) {
+                a = this.showedEntries[i].date;
+            }
+            if (this.showedEntries[i].date >= b) {
+                if (this.showedEntries[i].date == b) {
+                    c = Math.max(this.showedEntries[i].Time,c);
+                } else {
+                    c = this.showedEntries[i].Time;
+                }
+                b = this.showedEntries[i].date;
+            }
+        }
+        this.time = (b-a)+c;
+        this.firstDate = a;
     }
 
     this.initEntriesRows = function(){
@@ -187,16 +258,21 @@ function HarViewer(){
 
             $('#HarViewerTable').append(row);
             $('#HarViewerRow_'+i).addClass('HarViewerTableTd');
+            if (i%2 == 0) {
+                $('#HarViewerRow_'+i).css('background-color','#FFFFFF');
+            } else {
+                $('#HarViewerRow_'+i).css('background-color','#F2F2F2');
+            }
 
             for (var j = 0; j < this.listFilters.length; j++) {
                 this.listFilters[j]
                 var field = document.createElement('div');
                 field.id = 'HarViewerRow_'+this.listFilters[j]+'_'+i;
                 if (this.listFilters[j] == 'URL') {
-                    field.innerHTML = '<a href="'+entry[this.listFilters[j]]+'">'+entry[this.listFilters[j]]+'</a>';
+                    field.innerHTML = '<a href="'+entry[this.listFilters[j]]+'" title="'+entry[this.listFilters[j]]+'" class="tooltip" >'+entry[this.listFilters[j]]+'</a>';
                 } else {
 
-                    field.innerHTML = entry[this.listFilters[j]];
+                    field.innerHTML = '<p title="'+entry[this.listFilters[j]]+'" class="tooltip">'+entry[this.listFilters[j]]+'</p>';
 
                 }
 
@@ -234,7 +310,7 @@ function HarViewer(){
         this.timesTh.id = 'HarViewerTimeTh';
 
         $('#HarViewerWaterFall').append(this.timesTh);
-        $('#HarViewerTimeTh').height($('#HarViewerRow_0').height());
+        $('#HarViewerTimeTh').height($('#HarViewerFilters').height());
 
         var divTime = Math.floor(this.time / 10);
 
@@ -267,8 +343,28 @@ function HarViewer(){
             var width = $('#HarViewerWaterFall').width();
             var trWidth = 0
             $('#HarViewerWaterFallRow_'+i).addClass('HarViewerWaterFallRow');
+            beginAt = $('#HarViewerWaterFall').width() * (entry.date - this.firstDate) / this.time;
+            console.log(beginAt);
             $('#HarViewerWaterFallRow_'+i).css('padding-left',beginAt);
-            $('#HarViewerWaterFallRow_'+i).height($('#HarViewerRow_0').height());
+            $('#HarViewerWaterFallRow_'+i).outerHeight($('#HarViewerRow_0').outerHeight());
+            if (i%2 == 0) {
+                $('#HarViewerWaterFallRow_'+i).css('background-color','#FFFFFF');
+            } else {
+                $('#HarViewerWaterFallRow_'+i).css('background-color','#F2F2F2');
+            }
+
+            allTimingsBlock = document.createElement('div');
+            allTimingsBlock.id = 'HarViewerWaterFallRowAllTiming_'+i;
+            allTimingsBlock.title = '';
+
+            for ( timing in entry.Timings ) {
+                value = entry.Timings[timing];
+                allTimingsBlock.title = allTimingsBlock.title+timing+' : '+value+'\n';
+            }
+
+            $('#HarViewerWaterFallRow_'+i).append(allTimingsBlock);
+            $('#HarViewerWaterFallRowAllTiming_'+i).addClass('HarViewerAllTimingBlock');
+            $('#HarViewerWaterFallRowAllTiming_'+i).addClass('tooltip');
 
             for ( timing in entry.Timings ) {
 
@@ -276,18 +372,18 @@ function HarViewer(){
                 var block = document.createElement('div');
                 block.id = 'HarViewerWaterFallRow_'+timing+'_'+i;
                 block.alt = value;
-                $('#HarViewerWaterFallRow_'+i).append(block);
+                $('#HarViewerWaterFallRowAllTiming_'+i).append(block);
                 var classTiming = timing.substring(0,1).toUpperCase()+timing.substring(1);
                 $('#HarViewerWaterFallRow_'+timing+'_'+i).addClass('HarViewerTiming'+classTiming);
                 $('#HarViewerWaterFallRow_'+timing+'_'+i).addClass('HarViewerTimingBlock');
                 var blockWidth = width * value / this.time;
-                $('#HarViewerWaterFallRow_'+timing+'_'+i).width((blockWidth));
-                trWidth = trWidth + $('#HarViewerWaterFallRow_'+timing+'_'+i).width();
+                $('#HarViewerWaterFallRow_'+timing+'_'+i).outerWidth((blockWidth));
+                //trWidth = trWidth + $('#HarViewerWaterFallRow_'+timing+'_'+i).outerWidth();
 
 
             }
 
-            beginAt = trWidth + beginAt;
+            //beginAt = trWidth + beginAt;
 
         }
 
@@ -429,7 +525,7 @@ function HarViewer(){
             }
 
         }
-
+        viewer.initTime();
         viewer.initTable();
         viewer.initWaterFallView();
 
@@ -461,6 +557,43 @@ function HarViewer(){
             viewer.showDetails();
         }
     }
+
+    this.onFilter = function(event){
+
+        var id = event.currentTarget.id;
+
+        var c = 0;
+        var find = false;
+        for (var j = id.length - 1; (j >= 0 && !find); j--) {
+            if(id[j] == '_'){
+                c = j;
+                find = true;
+            }
+
+        }
+
+        var no = id.substring((c+1));
+
+        viewer.showedEntries.sort(function(a,b){
+            return viewer.compareTwoEntries(a,b,viewer.listFilters[no]);
+        })
+
+        viewer.initTime();
+        viewer.initTable();
+        viewer.initWaterFallView();
+
+    }
+
+    this.compareTwoEntries = function(a,b,attr){
+        var ret = 0;
+        if (a[attr] > b[attr]) {
+            ret = 1;
+        } else if (a[attr] < b[attr]){
+            ret = -1;
+        }
+        return ret;
+    }
+
 }
 
 function parseHar(har){
