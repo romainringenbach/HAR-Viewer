@@ -73,6 +73,8 @@ function HarViewer(){
             viewer.initTime();
             viewer.initTable();
             viewer.initWaterFallView();
+            viewer.hideDetails();
+            viewer.showWaterFall();
         })
         this.displayWaterFall = document.createElement('img');
         this.displayWaterFall.id = 'HarViewerDisplayWaterFall';
@@ -129,6 +131,7 @@ function HarViewer(){
         this.hideDetails();
         this.currentEntryFocused = null;
         $('#HarViewerContent').height($('#HarViewerLeftPanel').outerHeight(true));
+        $('#HarViewerContent').outerWidth($('#HarViewerForm').outerWidth(true));
         $('#HarViewerRightPanel').outerWidth($('#HarViewerLeftPanel').outerWidth(true));
     }
 
@@ -344,7 +347,6 @@ function HarViewer(){
             var trWidth = 0
             $('#HarViewerWaterFallRow_'+i).addClass('HarViewerWaterFallRow');
             beginAt = $('#HarViewerWaterFall').width() * (entry.date - this.firstDate) / this.time;
-            console.log(beginAt);
             $('#HarViewerWaterFallRow_'+i).css('padding-left',beginAt);
             $('#HarViewerWaterFallRow_'+i).outerHeight($('#HarViewerRow_0').outerHeight());
             if (i%2 == 0) {
@@ -480,7 +482,7 @@ function HarViewer(){
 
         }
 
-        $('#HarViewerDetails').height( $('#HarViewerTable').height() );
+        $('#HarViewerDetails').outerHeight( $('#HarViewerTable').outerHeight(true) );
 
     }
 
@@ -550,11 +552,28 @@ function HarViewer(){
             viewer.hideDetails();
             viewer.showWaterFall();
             viewer.currentEntryFocused = null;
+
+            if (index%2 == 0) {
+                $('#HarViewerWaterFallRow_'+index).css('background-color','#FFFFFF');
+                $('#HarViewerRow_'+index).css('background-color','#FFFFFF');
+            } else {
+                $('#HarViewerWaterFallRow_'+index).css('background-color','#F2F2F2');
+                $('#HarViewerRow_'+index).css('background-color','#F2F2F2');
+            }
         } else {
+            if (viewer.currentEntryFocused%2 == 0) {
+                $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
+                $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
+            } else {
+                $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
+                $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
+            }
             viewer.currentEntryFocused = index;
             viewer.initDetails();
             viewer.hideWaterFall();
             viewer.showDetails();
+            $('#HarViewerWaterFallRow_'+index).css('background-color', '#FFA07A');
+            $('#HarViewerRow_'+index).css('background-color', '#FFA07A');
         }
     }
 
@@ -581,6 +600,8 @@ function HarViewer(){
         viewer.initTime();
         viewer.initTable();
         viewer.initWaterFallView();
+
+
 
     }
 
