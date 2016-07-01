@@ -119,6 +119,7 @@ function HarViewer(id,additionnalIndicators){
                 date: new Date(this.entries[i].startedDateTime).valueOf()
             };
             delete entry.Timings.comment;
+            delete entry.Timings.ssl;
             this.showedEntries.push(entry);
             this.entriesSummaries.push(entry);
         }
