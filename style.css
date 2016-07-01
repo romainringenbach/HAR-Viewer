@@ -243,13 +243,10 @@ p {
     background-color: #BDB76B;
 }
 .HarViewerTimingWait{
-    background-color:  	#D2691E;
+    background-color:  	#FA8072;
 }
 .HarViewerTimingReceive{
-    background-color: #964B00;
-}
-.HarViewerTimingSsl{
-    background-color: #FA8072;
+    background-color: #D2691E;
 }
 
 #HarViewerDetails {
