@@ -68,6 +68,63 @@ function HarViewer(id,additionnalIndicators){
 
     }
 
+    this.initEntriesSummaries = function(){
+
+        this.time = 0;
+
+        for (var i = 0; i < this.entries.length; i++) {
+
+            // beautify the url to make a name of the resources
+
+            var url = this.entries[i].request.url;
+
+            var c = 0;
+            var find = false;
+            for (var j = url.length - 1; (j >= 0 && !find); j--) {
+                if(url[j] == '/'){
+                    c = j;
+                    find = true;
+                }
+
+            }
+
+            var name = url.substring(c);
+
+            // beautify the type
+
+            var brutType = this.entries[i].response.content.mimeType;
+            var d = 0;
+            find = false;
+            for (var j = 0; (j < brutType.length && !find); j++) {
+                if(brutType[j] == ';'){
+                    d = j;
+                    find = true;
+                }
+
+            }
+            var type = brutType.substring(0,d);
+            if (!find) {
+                type = brutType;
+            }
+
+            entry = {
+                Name: name,
+                URL: this.entries[i].request.url,
+                Method: this.entries[i].request.method,
+                Status: this.entries[i].response.status,
+                Type: type,
+                Size: this.entries[i].response.content.size,
+                Time: this.entries[i].time,
+                Timings: this.entries[i].timings,
+                date: new Date(this.entries[i].startedDateTime).valueOf()
+            };
+            delete entry.Timings.comment;
+            this.showedEntries.push(entry);
+            this.entriesSummaries.push(entry);
+        }
+
+    }
+
     this.initFrontEnd = function(){
 
         this.initForm();
@@ -199,7 +256,7 @@ function HarViewer(id,additionnalIndicators){
         this.currentEntryFocused = 0;
         this.initDetails();
         this.hideDetails();
-        $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));        
+        $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));
     }
 
     this.initLeftRight = function(){
@@ -252,63 +309,6 @@ function HarViewer(id,additionnalIndicators){
         }
 
         this.initEntriesRows();
-
-    }
-
-    this.initEntriesSummaries = function(){
-
-        this.time = 0;
-
-        for (var i = 0; i < this.entries.length; i++) {
-
-            // beautify the url to make a name of the resources
-
-            var url = this.entries[i].request.url;
-
-            var c = 0;
-            var find = false;
-            for (var j = url.length - 1; (j >= 0 && !find); j--) {
-                if(url[j] == '/'){
-                    c = j;
-                    find = true;
-                }
-
-            }
-
-            var name = url.substring(c);
-
-            // beautify the type
-
-            var brutType = this.entries[i].response.content.mimeType;
-            var d = 0;
-            find = false;
-            for (var j = 0; (j < brutType.length && !find); j++) {
-                if(brutType[j] == ';'){
-                    d = j;
-                    find = true;
-                }
-
-            }
-            var type = brutType.substring(0,d);
-            if (!find) {
-                type = brutType;
-            }
-
-            entry = {
-                Name: name,
-                URL: this.entries[i].request.url,
-                Method: this.entries[i].request.method,
-                Status: this.entries[i].response.status,
-                Type: type,
-                Size: this.entries[i].response.content.size,
-                Time: this.entries[i].time,
-                Timings: this.entries[i].timings,
-                date: new Date(this.entries[i].startedDateTime).valueOf()
-            };
-            delete entry.Timings.comment;
-            this.showedEntries.push(entry);
-            this.entriesSummaries.push(entry);
-        }
 
     }
 
