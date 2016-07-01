@@ -135,11 +135,6 @@ function HarViewer(id,additionnalIndicators){
 
         $('#'+this.form.id).outerWidth($('#'+this.id).outerWidth());
         $('#'+this.form.id).height($('#'+this.search.id).outerHeight());
-        $('#'+this.search.id).css('border-radius',($('#'+this.search.id).outerHeight()/2));
-        $('#'+this.search.id).css('border-color','#000000');
-        $('#'+this.search.id).css('border-width',0);
-        $('#'+this.search.id).css('border-style','solid');
-
 
         var position = $('#'+this.form.id).position();
         console.log($('#'+this.search.id).outerHeight());
@@ -151,6 +146,14 @@ function HarViewer(id,additionnalIndicators){
         $('#'+this.actions.id).css('position','absolute');
         $('#'+this.actions.id).css('top',y);
         $('#'+this.actions.id).css('left',x);
+
+        $('#'+this.search.id).css('border-radius',($('#'+this.search.id).outerHeight()/2));
+        $('#'+this.search.id).css('border-color','#000000');
+        $('#'+this.search.id).css('border-width',0);
+        $('#'+this.search.id).css('border-style','solid');
+        $('#'+this.search.id).css('max-width',x);
+        $('#'+this.search.id).css('margin-top','auto');
+        $('#'+this.search.id).css('margin-bottom','auto');
 
     }
 
