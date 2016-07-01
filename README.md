@@ -4,7 +4,7 @@
 
 HAR-Viewer is a web embeded viewer for your HTTP Archive, but for only one pages.
 
-! This viewer use jquery and lot of id, so you should only display one viewer.
+! This viewer use lot of ids, so you should only display one viewer.
 
 ## Get started
 
