@@ -12,7 +12,7 @@
   <script src="HarViewer.js"></script>
   <script>
     harviewer = new HarViewer('HarViewer');
-    $.getJSON('sample.json', function(data){
+    $.getJSON('https://raw.githubusercontent.com/nealith/HAR-Viewer/dev/sample.json', function(data){
 
         harviewer.loadHar(data);
 

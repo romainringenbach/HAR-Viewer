@@ -22,9 +22,10 @@ body {
 #HarViewerActions {
     padding: 0%;
     margin: 0%;
-    width: auto;
-    float: right;
-    clear: right;
+}
+
+#HarViewerActions > img {
+    float: left;
 }
 
 #HarViewerSearch {
@@ -72,7 +73,7 @@ body {
     color: #2F4F4F;
 }
 
-.HarViewerTableTd, #HarViewerFilters {
+.HarViewerTableRow, #HarViewerFilters {
     overflow: hidden;
     width: 100%;
     padding: 0%;
@@ -85,24 +86,21 @@ body {
     font-size: 1.1em;
 }
 
-.HarViewerTableTd {
+.HarViewerTableRow {
     border-top: solid;
     border-color:  	#000000;
     border-width: 0px;
-}
-
-p {
-    font-size: 1em;
-}
-
-.HarViewerTableTd {
     width: 100%;
     height: auto;
     padding: 0%;
     margin: 0%;
 }
 
-#HarViewerFilters > div, .HarViewerTableTd > div {
+p {
+    font-size: 1em;
+}
+
+#HarViewerFilters > div, .HarViewerTableRow > div {
     display: block;
 
     float: left;
@@ -206,7 +204,7 @@ p {
     border-width: 0px;
     height: 100%;
     overflow: hidden;
-    z-index: 3;
+
 }
 
 .HarViewerTimingBlock{
