@@ -34,8 +34,7 @@ A example is already in the package, index.html :
     new HarViewer(id,[indicator, indicator2...])
 
 - id is the id of the div where HAR-Viewer will be Build
--
-indicator is object :
+- indicator is object :
 
 {
     name : "name",
