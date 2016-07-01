@@ -33,7 +33,7 @@ function HarViewer(id,additionnalIndicators){
     this.listFilters = ['Name','URL','Method','Status','Type','Size','Time'];
     this.responseHeader = ['Server','Date','Content-Type','Last-Modified','Transfer-Encoding','Connection','Vary','Content-Encoding'];
     this.requestHeader = ['Host','Accept','Referer','Accept-Encoding','Accept-Language','User-Agent','Cache-Control'];
-    this.entryTimings = ['blocked','dns','connect','send','wait','receive','ssl'];
+    this.entryTimings = ['blocked','dns','connect','send','wait','receive'];
     this.filters = null;
     this.time = null;
     this.firstDate = null;
@@ -609,11 +609,12 @@ function HarViewer(id,additionnalIndicators){
             $('#'+this.details.id).remove();
         }
 
+        $('#'+this.right.id).append(this.details);
+
         this.initRequest();
         this.initResponse();
         this.initTimings();
 
-        $('#'+this.right.id).append(this.details);
         $('#'+this.details.id).outerHeight( $('#'+this.table.id).outerHeight(true) );
 
     }
