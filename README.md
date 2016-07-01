@@ -36,11 +36,11 @@ A example is already in the package, index.html :
 - id is the id of the div where HAR-Viewer will be Build
 - indicator is object :
 
-{
-    name : "name",
-    value : value,
-    color : '#000000'
+    {
+        name : "name",
+        value : value,
+        color : '#000000'
 
-}  
+    }  
 
 - data is the har in json format  
