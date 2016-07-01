@@ -8,19 +8,7 @@ HAR-Viewer is a web embeded viewer for your HTTP Archive, but for only one pages
 
 ## Get started
 
-A example is already in the package, index.html :
-
-    <div id="HarViewer"></div>
-    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
-    <script src="https://raw.githubusercontent.com/nealith/HAR-Viewer/dev/HarViewer.js"></script>
-    <script>
-    harviewer = new HarViewer('HarViewer');
-    $.getJSON('https://raw.githubusercontent.com/nealith/HAR-Viewer/dev/sample.json', function(data){
-
-        harviewer.loadHar(data);
-
-    })
-    </script>
+A example is already in the package, index.html
 
 ## Features
 
