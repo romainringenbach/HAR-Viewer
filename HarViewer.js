@@ -46,6 +46,7 @@ function HarViewer(id,additionnalIndicators){
     this.responseList = null;
     this.timings = null;
     this.timingsList = null;
+    this.globalInformationBar = null;
     this.buttons = null;
     this.reload = null;
     this.displayWaterFall = null;
@@ -130,6 +131,7 @@ function HarViewer(id,additionnalIndicators){
 
         this.initForm();
         this.initLeftRight();
+        this.initGlobalInformationsBar();
 
     }
 
@@ -617,6 +619,27 @@ function HarViewer(id,additionnalIndicators){
         this.initTimings();
 
         $('#'+this.details.id).outerHeight( $('#'+this.table.id).outerHeight(true) );
+
+    }
+
+    this.initGlobalInformationsBar = function(){
+
+        this.globalInformationsBar = document.createElement('div');
+        this.globalInformationsBar.id = 'HarViewerGlobalInformationsBar';
+
+        if ($('#'+this.globalInformationsBar.id).length){
+            $('#'+this.globalInformationsBar.id).remove();
+        }
+
+        var weight = 0;
+
+        for (var i = 0; i < this.entriesSummaries.length; i++) {
+            weight = weight + this.entriesSummaries[i].Size;
+        }
+
+        this.globalInformationsBar.innerHTML = '<p><strong>Requests : </strong>'+this.entriesSummaries.length+'; <strong>Weight : </strong>'+weight+'</p>';
+        $('#'+this.id).append(this.globalInformationsBar);
+
 
     }
 

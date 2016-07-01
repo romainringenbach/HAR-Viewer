@@ -265,7 +265,19 @@ p {
     cursor: pointer;
 }
 
+#HarViewerGlobalInformationsBar {
+    padding: 0%;
+    padding-left: 5px;
+    margin: 0%;
+    width: 100%;
+    background-color:  	#F0E68C;
+}
 
+#HarViewerGlobalInformationsBar p {
+    display: block;
+    padding: 2px;
+    margin: 0%;
+}
 
 .tooltip{
     display: inline;
