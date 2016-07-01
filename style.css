@@ -79,6 +79,7 @@ body {
     padding: 0%;
     margin: 0%;
     border: none;
+    cursor: pointer;
 }
 
 #HarViewerFilters {
@@ -261,6 +262,10 @@ p {
     border-color:  	#000000;
     border-width: 0px;
     background-color: #F2F2F2;
+}
+
+#HarViewerActions {
+    cursor: pointer;
 }
 
 
