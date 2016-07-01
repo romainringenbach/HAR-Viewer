@@ -85,7 +85,7 @@ function HarViewer(id,additionnalIndicators){
         $('#'+this.form.id).append(this.search);
         $('#'+this.form.id).keypress( this.onSearch );
         $('#'+this.search.id).click( this.onClickOnSearch );
-        $('#'+this.form.id).focusout( this.onFocusOutSearch );
+        $('#'+this.search.id).focusout( this.onFocusOutSearch );
 
         this.actions = document.createElement('div');
         this.actions.id = 'HarViewerActions';
@@ -623,11 +623,11 @@ function HarViewer(id,additionnalIndicators){
     }
 
     this.onClickOnSearch = function(event){
-        $('#'+this.search.id).prop( 'value' , '');
+        $('#'+viewer.search.id).prop( 'value' , '');
     }
 
     this.onFocusOutSearch = function(event){
-        $('#'+this.search.id).prop( 'value' , 'Search...');
+        $('#'+viewer.search.id).prop( 'value' , 'Search...');
     }
 
     this.onSearch = function(event){
