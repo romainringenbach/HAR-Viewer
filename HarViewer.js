@@ -31,6 +31,9 @@ function HarViewer(id,additionnalIndicators){
     this.right = null;
     this.table = null;
     this.listFilters = ['Name','URL','Method','Status','Type','Size','Time'];
+    this.responseHeader = ['Server','Date','Content-Type','Last-Modified','Transfer-Encoding','Connection','Vary','Content-Encoding'];
+    this.requestHeader = ['Host','Accept','Referer','Accept-Encoding','Accept-Language','User-Agent','Cache-Control'];
+    this.entryTimings = ['blocked','dns','connect','send','wait','receive','ssl'];
     this.filters = null;
     this.time = null;
     this.firstDate = null;
@@ -43,12 +46,17 @@ function HarViewer(id,additionnalIndicators){
     this.responseList = null;
     this.timings = null;
     this.timingsList = null;
-    this.actions = null;
+    this.buttons = null;
     this.reload = null;
     this.displayWaterFall = null;
     this.displayDetails = null;
     this.firstDetails = true;
     this.currentEntryFocused = 0;
+
+    this.colorPairRow = '#FFFFFF';
+    this.colorUnpairRow = '#F2F2F2';
+    this.colorHighlightRow = '#FFA07A';
+    this.colorIndicatorOnload = '#DC143C';
 
     this.loadHar = function(har){
         this.entriesSummaries = new Array();
@@ -62,41 +70,16 @@ function HarViewer(id,additionnalIndicators){
 
     this.initFrontEnd = function(){
 
-        this.initSearchBar();
+        this.initForm();
         this.initLeftRight();
 
     }
 
-    this.initSearchBar = function(){
-
-        this.form = document.createElement('form');
-        this.form.id = 'HarViewerForm';
-
-        if ($('#'+this.form.id).length){
-            $('#'+this.form.id).remove();
-        }
-
-        this.search = document.createElement('input');
-        this.search.type = 'text';
-        this.search.value = 'Search...';
-        this.search.id = 'HarViewerSearch';
-
-        $('#'+this.id).append(this.form);
-        $('#'+this.form.id).append(this.search);
-        $('#'+this.form.id).keypress( this.onSearch );
-        $('#'+this.search.id).click( this.onClickOnSearch );
-        $('#'+this.search.id).focusout( this.onFocusOutSearch );
-
-        this.actions = document.createElement('div');
-        this.actions.id = 'HarViewerActions';
-        $('#'+this.form.id).append(this.actions);
+    this.initButtonReload = function(){
         this.reload = document.createElement('img');
         this.reload.id = 'HarViewerReload';
         this.reload.src = 'reload.png';
-
-
-
-        $('#'+this.actions.id).append(this.reload);
+        $('#'+this.buttons.id).append(this.reload);
         $('#'+this.reload.id).outerHeight($('#'+this.search.id).outerHeight());
         $('#'+this.reload.id).outerWidth($('#'+this.search.id).outerHeight());
         $('#'+this.reload.id).click(function(event){
@@ -110,51 +93,113 @@ function HarViewer(id,additionnalIndicators){
             viewer.hideDetails();
             viewer.showWaterFall();
         })
+    }
+
+    this.initButtonDisplayWaterFall = function(){
         this.displayWaterFall = document.createElement('img');
         this.displayWaterFall.id = 'HarViewerDisplayWaterFall';
         this.displayWaterFall.src = 'displayWaterFall.png';
-        $('#'+this.actions.id).append(this.displayWaterFall);
+        $('#'+this.buttons.id).append(this.displayWaterFall);
         $('#'+this.displayWaterFall.id).outerHeight($('#'+this.search.id).outerHeight());
         $('#'+this.displayWaterFall.id).outerWidth($('#'+this.search.id).outerHeight());
         $('#'+this.displayWaterFall.id).click(function(event){
             viewer.hideDetails();
             viewer.showWaterFall();
         })
+    }
+
+    this.initButtonDisplayDetails = function(){
         this.displayDetails = document.createElement('img');
         this.displayDetails.id = 'HarViewerDisplayDetails';
         this.displayDetails.src = 'displayDetails.png';
-        $('#'+this.actions.id).append(this.displayDetails);
+        $('#'+this.buttons.id).append(this.displayDetails);
         $('#'+this.displayDetails.id).outerHeight($('#'+this.search.id).outerHeight());
         $('#'+this.displayDetails.id).outerWidth($('#'+this.search.id).outerHeight());
         $('#'+this.displayDetails.id).click(function(event){
             viewer.hideWaterFall();
             viewer.showDetails();
         })
+    }
 
+    this.initButtons = function(){
 
+        this.buttons = document.createElement('div');
+        this.buttons.id = 'HarViewerActions';
+        $('#'+this.form.id).append(this.buttons);
 
-        $('#'+this.form.id).outerWidth($('#'+this.id).outerWidth());
-        $('#'+this.form.id).height($('#'+this.search.id).outerHeight());
+        this.initButtonReload();
+        this.initButtonDisplayWaterFall();
+        this.initButtonDisplayDetails();
 
         var position = $('#'+this.form.id).position();
-        console.log($('#'+this.search.id).outerHeight());
         var width = $('#'+this.reload.id).outerWidth(true) + $('#'+this.displayWaterFall.id).outerWidth(true) + $('#'+this.displayDetails.id).outerWidth(true);
-        $('#'+this.actions.id).width(width);
-        var x = position.left+$('#'+this.form.id).width()-$('#'+this.actions.id).outerWidth(true);
+        $('#'+this.buttons.id).width(width);
+        var x = position.left+$('#'+this.form.id).width()-$('#'+this.buttons.id).outerWidth(true);
         var y = position.top + $('#'+this.form.id).css('padding-top')+$('#'+this.form.id).css('margin-top');
 
-        $('#'+this.actions.id).css('position','absolute');
-        $('#'+this.actions.id).css('top',y);
-        $('#'+this.actions.id).css('left',x);
+        $('#'+this.buttons.id).css('position','absolute');
+        $('#'+this.buttons.id).css('top',y);
+        $('#'+this.buttons.id).css('left',x);
+
+    }
+
+    this.initSearchBar = function(){
+
+        this.search = document.createElement('input');
+        this.search.type = 'text';
+        this.search.value = 'Search...';
+        this.search.id = 'HarViewerSearch';
+        $('#'+this.form.id).append(this.search);
+        $('#'+this.search.id).keypress( this.onSearch );
+        $('#'+this.search.id).click( this.onClickOnSearch );
+        $('#'+this.search.id).focusout( this.onFocusOutSearch );
 
         $('#'+this.search.id).css('border-radius',($('#'+this.search.id).outerHeight()/2));
         $('#'+this.search.id).css('border-color','#000000');
         $('#'+this.search.id).css('border-width',0);
         $('#'+this.search.id).css('border-style','solid');
-        $('#'+this.search.id).css('max-width',x);
-        $('#'+this.search.id).css('margin-top','auto');
-        $('#'+this.search.id).css('margin-bottom','auto');
 
+    }
+
+    this.initForm = function(){
+
+        this.form = document.createElement('form');
+        this.form.id = 'HarViewerForm';
+
+        if ($('#'+this.form.id).length){
+            $('#'+this.form.id).remove();
+        }
+
+        $('#'+this.id).append(this.form);
+
+        this.initSearchBar();
+        this.initButtons();
+
+        $('#'+this.form.id).outerWidth($('#'+this.id).outerWidth());
+        $('#'+this.form.id).height($('#'+this.search.id).outerHeight());
+
+    }
+
+    this.initLeft = function(){
+        this.left = document.createElement( 'div' );
+        this.left.id = 'HarViewerLeftPanel';
+        $('#'+this.content.id).append(this.left);
+        $('#'+this.left.id).css('float','left');
+        this.initTable();
+    }
+
+    this.initRight = function(){
+        this.right = document.createElement( 'div' );
+        this.right.id = 'HarViewerRightPanel';
+        $('#'+this.content.id).append(this.right);
+        $('#'+this.right.id).css('float','right');
+        this.initTime();
+        this.initWaterFallView();
+        this.showWaterFall();
+        this.currentEntryFocused = 0;
+        this.initDetails();
+        this.hideDetails();
+        $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));        
     }
 
     this.initLeftRight = function(){
@@ -165,28 +210,12 @@ function HarViewer(id,additionnalIndicators){
         }
         $('#'+this.id).append(this.content);
 
-        this.left = document.createElement( 'div' );
-        this.left.id = 'HarViewerLeftPanel';
-        $('#'+this.content.id).append(this.left);
-        $('#'+this.left.id).css('float','left');
+        this.initLeft();
 
-        this.right = document.createElement( 'div' );
-        this.right.id = 'HarViewerRightPanel';
-        $('#'+this.content.id).append(this.right);
-        $('#'+this.right.id).css('float','right');
-
-
-        this.initTime();
-        this.initTable();
-        this.initWaterFallView();
-        this.showWaterFall();
-
-        this.currentEntryFocused = 0;
-        this.initDetails();
-        this.hideDetails();
         $('#'+this.content.id).height($('#'+this.left.id).outerHeight(true));
         $('#'+this.content.id).outerWidth($('#'+this.form.id).outerWidth(true));
-        $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));
+
+        this.initRight();
     }
 
     this.initTable = function(){
@@ -197,8 +226,6 @@ function HarViewer(id,additionnalIndicators){
         if ($('#'+this.table.id).length){
             $('#'+this.table.id).remove();
         }
-
-
 
         $('#'+this.left.id).append(this.table);
 
@@ -319,9 +346,9 @@ function HarViewer(id,additionnalIndicators){
             $('#'+this.table.id).append(row);
             $('#'+row.id).addClass('HarViewerTableRow');
             if (i%2 == 0) {
-                $('#'+row.id).css('background-color','#FFFFFF');
+                $('#'+row.id).css('background-color',this.colorPairRow);
             } else {
-                $('#'+row.id).css('background-color','#F2F2F2');
+                $('#'+row.id).css('background-color',this.colorUnpairRow);
             }
 
             for (var j = 0; j < this.listFilters.length; j++) {
@@ -409,9 +436,9 @@ function HarViewer(id,additionnalIndicators){
             $('#HarViewerWaterFallRow_'+i).css('padding-left',beginAt);
             $('#HarViewerWaterFallRow_'+i).outerHeight($('#HarViewerRow_0').outerHeight());
             if (i%2 == 0) {
-                $('#HarViewerWaterFallRow_'+i).css('background-color','#FFFFFF');
+                $('#HarViewerWaterFallRow_'+i).css('background-color',this.colorPairRow);
             } else {
-                $('#HarViewerWaterFallRow_'+i).css('background-color','#F2F2F2');
+                $('#HarViewerWaterFallRow_'+i).css('background-color',this.colorUnpairRow);
             }
 
             allTimingsBlock = document.createElement('div');
@@ -455,7 +482,7 @@ function HarViewer(id,additionnalIndicators){
 
         var onload = this.har.log.pages[0].pageTimings.onLoad;
 
-        this.indicators.push({name:'onload',value:onload,color:'#DC143C'});
+        this.indicators.push({name:'onload',value:onload,color:this.colorIndicatorOnload});
 
         for (var i = 0; i < this.indicators.length; i++) {
 
@@ -483,31 +510,10 @@ function HarViewer(id,additionnalIndicators){
             $('#'+indicator.id).css('border-right','solid');
             $('#'+indicator.id).css('border-width','2px');
             $('#'+indicator.id).css('border-color',color);
-
-
-
         }
-
-
     }
 
-    this.initDetails = function(){
-
-        var responseHeader = ['Server','Date','Content-Type','Last-Modified','Transfer-Encoding','Connection','Vary','Content-Encoding'];
-        var requestHeader = ['Host','Accept','Referer','Accept-Encoding','Accept-Language','User-Agent','Cache-Control'];
-        var timings = ['blocked','dns','connect','send','wait','receive','ssl','comment'];
-
-        this.details = document.createElement( 'div' );
-        this.details.id = 'HarViewerDetails';
-
-        if ($('#'+this.details.id).length){
-            $('#'+this.details.id).remove();
-        }
-
-
-
-        $('#'+this.right.id).append(this.details);
-
+    this.initRequest = function(){
         this.request = document.createElement( 'div' );
         this.request.id = 'HarViewerDetailsRequest';
         this.request.innerHTML = '<p>Request</p>';
@@ -523,20 +529,22 @@ function HarViewer(id,additionnalIndicators){
 
         for (i = 0; i < entryComplete.request.headers.length; i++) {
 
-            for (j = 0; j < requestHeader.length; j++) {
-                if (entryComplete.request.headers[i].name == requestHeader[j]){
-                    entryRequestList[requestHeader[j]] = entryComplete.request.headers[i].value;
+            for (j = 0; j < this.requestHeader.length; j++) {
+                if (entryComplete.request.headers[i].name == this.requestHeader[j]){
+                    entryRequestList[this.requestHeader[j]] = entryComplete.request.headers[i].value;
                 }
             }
         }
 
-        for (i = 0; i < requestHeader.length ; i++){
+        for (i = 0; i < this.requestHeader.length ; i++){
 
             var li = document.createElement('li');
-            li.innerHTML = '<li><p><strong>'+requestHeader[i]+'</strong> : '+entryRequestList[requestHeader[i]]+'</p>';
+            li.innerHTML = '<li><p><strong>'+this.requestHeader[i]+'</strong> : '+entryRequestList[this.requestHeader[i]]+'</p>';
             $('#HarViewerDetailsRequestList').append(li);
         }
+    }
 
+    this.initResponse = function(){
         this.response = document.createElement( 'div' );
         this.response.id = 'HarViewerDetailsResponse';
         this.response.innerHTML = '<p>Response</p>';
@@ -545,26 +553,31 @@ function HarViewer(id,additionnalIndicators){
         this.responseList.id = 'HarViewerDetailsResponseList';
         $('#HarViewerDetailsResponse').append(this.responseList);
 
+        var entry = this.entriesSummaries[this.currentEntryFocused];
+        var entryComplete = this.entries[this.currentEntryFocused];
+
         var entryResponseList = {};
 
         for (i = 0; i < entryComplete.response.headers.length; i++) {
 
-            for (j = 0; j < responseHeader.length; j++) {
-                if (entryComplete.response.headers[i].name == responseHeader[j]){
-                    entryResponseList[responseHeader[j]] = entryComplete.response.headers[i].value;
+            for (j = 0; j < this.responseHeader.length; j++) {
+                if (entryComplete.response.headers[i].name == this.responseHeader[j]){
+                    entryResponseList[this.responseHeader[j]] = entryComplete.response.headers[i].value;
                 }
             }
         }
 
-        for (i = 0; i < responseHeader.length ; i++){
+        for (i = 0; i < this.responseHeader.length ; i++){
 
             var li = document.createElement('li');
-            li.innerHTML = '<li><p><strong>'+responseHeader[i]+'</strong> : '+entryResponseList[responseHeader[i]]+'</p>';
+            li.innerHTML = '<li><p><strong>'+this.responseHeader[i]+'</strong> : '+entryResponseList[this.responseHeader[i]]+'</p>';
             $('#HarViewerDetailsResponseList').append(li);
 
 
         }
+    }
 
+    this.initTimings = function(){
         this.timings = document.createElement( 'div' );
         this.timings.id = 'HarViewerDetailsTimings';
         this.timings.innerHTML = '<p>Timings</p>';
@@ -573,25 +586,42 @@ function HarViewer(id,additionnalIndicators){
         this.timingsList.id = 'HarViewerDetailsTimingsList';
         $('#HarViewerDetailsTimings').append(this.timingsList);
 
+        var entry = this.entriesSummaries[this.currentEntryFocused];
+
         var entryTimingsList = entry.Timings
 
-        for (i = 0; i < timings.length ; i++){
+        for (i = 0; i < this.entryTimings.length ; i++){
 
             var li = document.createElement('li');
-            li.innerHTML = '<li><p><strong>'+timings[i]+'</strong> : '+entryTimingsList[timings[i]]+'</p>';
+            li.innerHTML = '<li><p><strong>'+this.entryTimings[i]+'</strong> : '+entryTimingsList[this.entryTimings[i]]+'</p>';
             $('#HarViewerDetailsTimingsList').append(li);
 
 
         }
+    }
 
+    this.initDetails = function(){
+
+        this.details = document.createElement( 'div' );
+        this.details.id = 'HarViewerDetails';
+
+        if ($('#'+this.details.id).length){
+            $('#'+this.details.id).remove();
+        }
+
+        this.initRequest();
+        this.initResponse();
+        this.initTimings();
+
+        $('#'+this.right.id).append(this.details);
         $('#'+this.details.id).outerHeight( $('#'+this.table.id).outerHeight(true) );
 
     }
 
     this.showDetails = function(){
         var index = this.currentEntryFocused;
-        $('#HarViewerWaterFallRow_'+index).css('background-color', '#FFA07A');
-        $('#HarViewerRow_'+index).css('background-color', '#FFA07A');
+        $('#HarViewerWaterFallRow_'+index).css('background-color', this.colorHighlightRow);
+        $('#HarViewerRow_'+index).css('background-color', this.colorHighlightRow);
         $('#'+this.details.id).css( 'display', 'block' );
     }
 
@@ -602,18 +632,18 @@ function HarViewer(id,additionnalIndicators){
     this.hideDetails = function(){
         var index = this.currentEntryFocused;
         if (index%2 == 0) {
-            $('#HarViewerWaterFallRow_'+index).css('background-color','#FFFFFF');
-            $('#HarViewerRow_'+index).css('background-color','#FFFFFF');
+            $('#HarViewerWaterFallRow_'+index).css('background-color',this.colorPairRow);
+            $('#HarViewerRow_'+index).css('background-color',this.colorPairRow);
         } else {
-            $('#HarViewerWaterFallRow_'+index).css('background-color','#F2F2F2');
-            $('#HarViewerRow_'+index).css('background-color','#F2F2F2');
+            $('#HarViewerWaterFallRow_'+index).css('background-color',this.colorUnpairRow);
+            $('#HarViewerRow_'+index).css('background-color',this.colorUnpairRow);
         }
         if (viewer.currentEntryFocused%2 == 0) {
-            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
-            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
+            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color',this.colorPairRow);
+            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color',this.colorPairRow);
         } else {
-            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
-            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
+            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color',this.colorUnpairRow);
+            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color',this.colorUnpairRow);
         }
         $('#'+this.details.id).css( 'display', 'none' );
     }
