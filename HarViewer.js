@@ -23,7 +23,6 @@ function HarViewer(id,additionnalIndicators){
         }
 
     }
-
     this.form = null;
     this.search = null;
     this.content = null;
@@ -64,7 +63,9 @@ function HarViewer(id,additionnalIndicators){
         this.har = har;
         this.entries = parseHar(har);
         this.initEntriesSummaries();
+        var onload = this.har.log.pages[0].pageTimings.onLoad;
 
+        this.indicators.push({name:'onload',value:onload,color:this.colorIndicatorOnload});
         this.initFrontEnd();
 
     }
@@ -130,7 +131,7 @@ function HarViewer(id,additionnalIndicators){
     this.initFrontEnd = function(){
 
         this.initForm();
-        this.initLeftRight();
+        this.initContent();
         this.initGlobalInformationsBar();
 
     }
@@ -253,16 +254,17 @@ function HarViewer(id,additionnalIndicators){
         this.right.id = 'HarViewerRightPanel';
         $('#'+this.content.id).append(this.right);
         $('#'+this.right.id).css('float','right');
+        $('#'+this.right.id).outerWidth(($('#'+this.content.id).width() - $('#'+this.left.id).outerWidth(true)));
         this.initTime();
         this.initWaterFallView();
-        this.showWaterFall();
         this.currentEntryFocused = 0;
         this.initDetails();
         this.hideDetails();
-        $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));
+        this.showWaterFall();
+
     }
 
-    this.initLeftRight = function(){
+    this.initContent = function(){
         this.content = document.createElement('div');
         this.content.id = 'HarViewerContent';
         if ($('#'+this.content.id).length){
@@ -484,10 +486,6 @@ function HarViewer(id,additionnalIndicators){
 
     this.initIndicators = function(){
 
-        var onload = this.har.log.pages[0].pageTimings.onLoad;
-
-        this.indicators.push({name:'onload',value:onload,color:this.colorIndicatorOnload});
-
         for (var i = 0; i < this.indicators.length; i++) {
 
             var name = this.indicators[i].name;
@@ -495,13 +493,14 @@ function HarViewer(id,additionnalIndicators){
             var color = this.indicators[i].color;
             var beginAt = $('#'+this.waterfall.id).width() * (value / this.time);
 
-            var position = $('#'+this.right.id).position();
+            var position = $('#HarViewerTimeTh').position();
 
             var x = beginAt + position.left;
+            console.log(position.top);
             var y = position.top + $('#HarViewerTimeTh').outerHeight(true);
 
             var indicator = document.createElement('div');
-            indicator.id = 'HarViewerSeparator'+name;
+            indicator.id = 'HarViewerIndicator'+name;
             indicator.title = 'Name : '+name+', Value : '+value;
             $('#'+this.waterfall.id).append(indicator);
             $('#'+indicator.id).width(0);
@@ -511,6 +510,8 @@ function HarViewer(id,additionnalIndicators){
             $('#'+indicator.id).css('float','left');
             $('#'+indicator.id).css('top',y);
             $('#'+indicator.id).css('left',x);
+            $('#'+indicator.id).css('padding',0);
+            $('#'+indicator.id).css('margin',0);
             $('#'+indicator.id).css('border-right','solid');
             $('#'+indicator.id).css('border-width','2px');
             $('#'+indicator.id).css('border-color',color);
@@ -796,6 +797,7 @@ function HarViewer(id,additionnalIndicators){
 
     $( window ).resize(function() {
         viewer.initFrontEnd();
+        viewer.initIndicators();
     });
 
 }
