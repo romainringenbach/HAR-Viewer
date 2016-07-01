@@ -47,7 +47,7 @@ function HarViewer(id,additionnalIndicators){
     this.reload = null;
     this.displayWaterFall = null;
     this.displayDetails = null;
-
+    this.firstDetails = true;
     this.currentEntryFocused = 0;
 
     this.loadHar = function(har){
@@ -181,7 +181,6 @@ function HarViewer(id,additionnalIndicators){
         this.currentEntryFocused = 0;
         this.initDetails();
         this.hideDetails();
-        this.currentEntryFocused = null;
         $('#'+this.content.id).height($('#'+this.left.id).outerHeight(true));
         $('#'+this.content.id).outerWidth($('#'+this.form.id).outerWidth(true));
         $('#'+this.right.id).outerWidth($('#'+this.left.id).outerWidth(true));
@@ -587,6 +586,9 @@ function HarViewer(id,additionnalIndicators){
     }
 
     this.showDetails = function(){
+        var index = this.currentEntryFocused;
+        $('#HarViewerWaterFallRow_'+index).css('background-color', '#FFA07A');
+        $('#HarViewerRow_'+index).css('background-color', '#FFA07A');
         $('#'+this.details.id).css( 'display', 'block' );
     }
 
@@ -595,6 +597,21 @@ function HarViewer(id,additionnalIndicators){
     }
 
     this.hideDetails = function(){
+        var index = this.currentEntryFocused;
+        if (index%2 == 0) {
+            $('#HarViewerWaterFallRow_'+index).css('background-color','#FFFFFF');
+            $('#HarViewerRow_'+index).css('background-color','#FFFFFF');
+        } else {
+            $('#HarViewerWaterFallRow_'+index).css('background-color','#F2F2F2');
+            $('#HarViewerRow_'+index).css('background-color','#F2F2F2');
+        }
+        if (viewer.currentEntryFocused%2 == 0) {
+            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
+            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
+        } else {
+            $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
+            $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#F2F2F2');
+        }
         $('#'+this.details.id).css( 'display', 'none' );
     }
 
@@ -648,7 +665,7 @@ function HarViewer(id,additionnalIndicators){
 
         var no = id.substring((c+1));
         var index = no.valueOf();
-        if (index == viewer.currentEntryFocused) {
+        if (index == viewer.currentEntryFocused && !viewer.firstDetails) {
             viewer.hideDetails();
             viewer.showWaterFall();
             viewer.currentEntryFocused = null;
@@ -660,7 +677,12 @@ function HarViewer(id,additionnalIndicators){
                 $('#HarViewerWaterFallRow_'+index).css('background-color','#F2F2F2');
                 $('#HarViewerRow_'+index).css('background-color','#F2F2F2');
             }
-        } else {
+        } else if(viewer.firstDetails) {
+            viewer.firstDetails = false;
+            viewer.initDetails();
+            viewer.hideWaterFall();
+            viewer.showDetails();
+        }else {
             if (viewer.currentEntryFocused%2 == 0) {
                 $('#HarViewerWaterFallRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
                 $('#HarViewerRow_'+viewer.currentEntryFocused).css('background-color','#FFFFFF');
@@ -672,8 +694,6 @@ function HarViewer(id,additionnalIndicators){
             viewer.initDetails();
             viewer.hideWaterFall();
             viewer.showDetails();
-            $('#HarViewerWaterFallRow_'+index).css('background-color', '#FFA07A');
-            $('#HarViewerRow_'+index).css('background-color', '#FFA07A');
         }
     }
 
