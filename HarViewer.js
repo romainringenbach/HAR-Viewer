@@ -393,6 +393,7 @@ function HarViewer(id,additionnalIndicators){
 
         this.initWaterFallHeader();
         this.showWaterFall();
+        this.initIndicators();
 
     }
 
@@ -478,7 +479,7 @@ function HarViewer(id,additionnalIndicators){
             //beginAt = trWidth + beginAt;
 
         }
-        this.initIndicators();
+
     }
 
     this.initIndicators = function(){
