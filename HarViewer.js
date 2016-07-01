@@ -9,17 +9,17 @@
  *
  */
 
-function HarViewer(id,additionnalSeparators){
+function HarViewer(id,additionnalIndicators){
     var viewer = this;
     this.id = id;
     this.entriesSummaries = new Array();
     this.showedEntries = new Array();
 
-    this.separators = new Array();
-    if (additionnalSeparators) {
+    this.indicators = new Array();
+    if (additionnalIndicators) {
 
         for (var i = 0; i < additionnalSeparators.length; i++) {
-            this.separator.push(addtionnalSeparator[i]);
+            this.indicators.push(addtionnalIndicator[i]);
         }
 
     }
@@ -446,20 +446,20 @@ function HarViewer(id,additionnalSeparators){
             //beginAt = trWidth + beginAt;
 
         }
-        this.initSeparator();
+        this.initIndicators();
     }
 
-    this.initSeparator = function(){
+    this.initIndicators = function(){
 
         var onload = this.har.log.pages[0].pageTimings.onLoad;
 
-        this.separators.push({name:'onload',value:onload,color:'#DC143C'});
+        this.indicators.push({name:'onload',value:onload,color:'#DC143C'});
 
-        for (var i = 0; i < this.separators.length; i++) {
+        for (var i = 0; i < this.indicators.length; i++) {
 
-            var name = this.separators[i].name;
-            var value = this.separators[i].value;
-            var color = this.separators[i].color;
+            var name = this.indicators[i].name;
+            var value = this.indicators[i].value;
+            var color = this.indicators[i].color;
             var beginAt = $('#'+this.waterfall.id).width() * (value / this.time);
 
             var position = $('#'+this.right.id).position();
@@ -467,20 +467,20 @@ function HarViewer(id,additionnalSeparators){
             var x = beginAt + position.left;
             var y = position.top + $('#HarViewerTimeTh').outerHeight(true);
 
-            var separator = document.createElement('div');
-            separator.id = 'HarViewerSeparator'+name;
-            separator.title = 'Name : '+name+', Value : '+value;
-            $('#'+this.waterfall.id).append(separator);
-            $('#'+separator.id).width(0);
-            $('#'+separator.id).height(($('#'+this.waterfall.id).height() - $('#HarViewerTimeTh').outerHeight(true)));
-            $('#'+separator.id).css('position','absolute');
-            $('#'+separator.id).css('z-index',6);
-            $('#'+separator.id).css('float','left');
-            $('#'+separator.id).css('top',y);
-            $('#'+separator.id).css('left',x);
-            $('#'+separator.id).css('border-right','solid');
-            $('#'+separator.id).css('border-width','2px');
-            $('#'+separator.id).css('border-color',color);
+            var indicator = document.createElement('div');
+            indicator.id = 'HarViewerSeparator'+name;
+            indicator.title = 'Name : '+name+', Value : '+value;
+            $('#'+this.waterfall.id).append(indicator);
+            $('#'+indicator.id).width(0);
+            $('#'+indicator.id).height(($('#'+this.waterfall.id).height() - $('#HarViewerTimeTh').outerHeight(true)));
+            $('#'+indicator.id).css('position','absolute');
+            $('#'+indicator.id).css('z-index',6);
+            $('#'+indicator.id).css('float','left');
+            $('#'+indicator.id).css('top',y);
+            $('#'+indicator.id).css('left',x);
+            $('#'+indicator.id).css('border-right','solid');
+            $('#'+indicator.id).css('border-width','2px');
+            $('#'+indicator.id).css('border-color',color);
 
 
 
