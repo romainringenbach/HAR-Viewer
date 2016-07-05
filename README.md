@@ -2,7 +2,7 @@
 
 ![image](https://raw.githubusercontent.com/nealith/HAR-Viewer/dev/har-viewer.png)
 
-HAR-Viewer is a web embeded viewer for your HTTP Archive, but for only one pages.
+HAR-Viewer is a web embeded viewer for your HTTP Archive, but for only one page.
 
 ! This viewer use lot of ids, so you should only display one viewer.
 
@@ -27,7 +27,7 @@ A example is already in the package, index.html
 - indicator is object :
 
     {
-        name : "name",
+        name : 'name',
         value : value,
         color : '#000000'
 
