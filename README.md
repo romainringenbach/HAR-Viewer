@@ -17,7 +17,7 @@ A example is already in the package, index.html
 - Sort by filter
 - Search    
 - Tooltips
-- Visual indicators (onLoad is already defined)
+- Visual indicators on waterfall (onLoad is already defined)
 
 ## Documentation
 
