@@ -1,12 +1,12 @@
 /**
  *  id : id of the div where the view will be deploy
- *  additionnalSeparators : Array list of :
+ *  additionnalIndicators : Array list of :
  *  {
  *      name : name,
  *      value : value,
  *      color : color
  *  }
- *
+ *  additionnalIndicators allow you to add a visual indicator on waterfall, by default, onload value is showed
  */
 
 function HarViewer(id,additionnalIndicators){
@@ -18,7 +18,7 @@ function HarViewer(id,additionnalIndicators){
     this.indicators = new Array();
     if (additionnalIndicators) {
 
-        for (var i = 0; i < additionnalSeparators.length; i++) {
+        for (var i = 0; i < additionnalIndicators.length; i++) {
             this.indicators.push(addtionnalIndicator[i]);
         }
 
