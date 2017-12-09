@@ -32,5 +32,7 @@ A example is already in the package, index.html
         color : '#000000'
 
     }  
-
+    
+    HarViewer.loadHar(data)
+    
 - data is the har in json format  
